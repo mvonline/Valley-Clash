@@ -2,14 +2,21 @@
 
 A browser-based fan tribute fighting game: **stylized vector likenesses, original procedural art only**. Masters from the Valley of Peace and beyond. **Not affiliated with DreamWorks.**
 
+## Live demo
+
+Play in the browser (hosted build — same menu as local **`index.html`**):
+
+**[https://vafa.one/Valley-Clash/](https://vafa.one/Valley-Clash/)**
+
 ## Quick start
 
-Open **`index.html`** in a modern browser and pick a build:
+Clone or download the repo and open **`index.html`** in a modern browser, or open any build file directly:
 
 | File | Description |
 |------|-------------|
 | [`kfp-valley-clash.html`](kfp-valley-clash.html) | **Canvas 2D** — single file, no extra dependencies. |
 | [`kfp-valley-clash-pixi.html`](kfp-valley-clash-pixi.html) | **Pixi.js** — same gameplay; arena is drawn to an offscreen 2D canvas and composited via Pixi (GPU). Loads Pixi from an ESM CDN (needs network). |
+| [`kfp-valley-clash-animated.html`](kfp-valley-clash-animated.html) | **Animated** — articulated limb fighters, parallax valley stage, hit / block / chi / landing particle FX. |
 
 If the page is opened as a local file (`file://`), some browsers restrict modules or audio; for Pixi builds, a tiny local server works best.
 
@@ -86,5 +93,6 @@ Some later-film characters **reuse** another fighter’s procedural silhouette f
 - Single-page **HTML + inline JavaScript**.
 - **Canvas** build: one `<canvas>` for the arena.
 - **Pixi** build boots WebGL via Pixi and blits the same logical frame.
+- **Animated** build (`kfp-valley-clash-animated.html`): same logic as Canvas; procedural skeleton limbs, layered background, simple particle system.
 
 Enjoy the Valley Clash.
