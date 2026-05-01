@@ -65,10 +65,34 @@
       line-height: 1.4;
     }
 
-    #screens { width: min(960px, 100%); }
+    #screens { width: min(960px, 100%); margin: 0 auto; }
+
+    #wrap.select-mode #screens {
+      width: 100%;
+      max-width: min(1280px, 100%);
+    }
+
+    #wrap.select-mode .brand {
+      display: none;
+    }
+
+    #wrap.select-mode {
+      padding: 10px 16px 32px;
+      align-items: stretch;
+    }
 
     .screen { padding: 10px 0 12px; }
     .screen[hidden] { display: none !important; }
+
+    #screen-select {
+      min-height: calc(100vh - 20px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    #screen-select .select-layout {
+      flex: 1;
+    }
 
     .main-menu {
       display: flex;
@@ -129,43 +153,61 @@
 
     .select-layout {
       display: grid;
-      grid-template-columns: 1fr minmax(200px, 260px);
-      gap: 14px;
+      grid-template-columns: 1fr minmax(280px, 380px);
+      gap: 20px;
       align-items: start;
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 900px) {
       .select-layout { grid-template-columns: 1fr; }
     }
 
     #char-preview {
       position: sticky;
-      top: 8px;
-      background: var(--bg-panel);
-      border: 1px solid #2f3a4a;
-      border-radius: 6px;
-      padding: 14px;
-      font-size: 0.82rem;
+      top: 12px;
+      background: linear-gradient(165deg, #1c2434 0%, #121820 100%);
+      border: 1px solid rgba(201, 162, 39, 0.35);
+      border-radius: 10px;
+      padding: 18px;
+      font-size: 0.92rem;
+      color: #eef2f8;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .char-preview-portrait-wrap {
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 0 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #0a0d12;
+    }
+
+    #pv-portrait {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 300 / 210;
     }
 
     #char-preview h3 {
       font-family: "Cinzel", serif;
-      font-size: 0.9rem;
-      margin: 0 0 6px;
-      color: var(--gold);
-      letter-spacing: 0.06em;
+      font-size: 1.15rem;
+      margin: 0 0 8px;
+      color: #f4e8b8;
+      letter-spacing: 0.08em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
     }
 
     #char-preview .style-tag {
       display: inline-block;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #a8c4e8;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #3d4a5c;
-      padding-bottom: 4px;
+      letter-spacing: 0.14em;
+      color: #9ed4ff;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(158, 212, 255, 0.35);
+      padding-bottom: 6px;
     }
 
     #char-preview .combo-list {
@@ -175,72 +217,95 @@
     }
 
     #char-preview .combo-list li {
-      margin-bottom: 10px;
-      padding-left: 8px;
-      border-left: 3px solid var(--gold-dim);
+      margin-bottom: 12px;
+      padding-left: 12px;
+      border-left: 3px solid rgba(201, 162, 39, 0.75);
     }
 
     #char-preview .combo-keys {
       font-weight: 700;
-      color: #f0d78c;
-      font-size: 0.78rem;
+      color: #ffe7a8;
+      font-size: 0.88rem;
+      letter-spacing: 0.04em;
     }
 
     #char-preview .combo-name {
       font-family: "Cinzel", serif;
-      font-size: 0.72rem;
-      color: var(--text);
+      font-size: 0.82rem;
+      color: #f8f4ec;
+      margin-bottom: 4px;
+    }
+
+    #char-preview .pv-desc {
+      margin: 0 0 14px;
+      color: #c4ced9;
+      font-size: 0.88rem;
+      line-height: 1.55;
     }
 
     .roster {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: 12px;
     }
 
     .char-card {
-      background: var(--bg-panel);
-      border: 2px solid #2f3a4a;
-      border-radius: 6px;
-      padding: 10px 8px;
+      background: linear-gradient(180deg, #1a2230 0%, #141a24 100%);
+      border: 2px solid #3d4d62;
+      border-radius: 10px;
+      padding: 12px 10px;
       cursor: pointer;
       text-align: center;
-      transition: border-color 0.15s, transform 0.1s;
+      transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
     }
 
-    .char-card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+    .char-card:hover {
+      border-color: #c9a227;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
     .char-card:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
-    .char-card.selected-p1 { border-color: #3498db; box-shadow: 0 0 14px rgba(52, 152, 219, 0.35); }
-    .char-card.selected-p2 { border-color: #e74c3c; box-shadow: 0 0 14px rgba(231, 76, 60, 0.35); }
-    .char-card.preview-focus { border-color: var(--gold); }
+    .char-card.selected-p1 { border-color: #5dade2; box-shadow: 0 0 18px rgba(93, 173, 226, 0.45); }
+    .char-card.selected-p2 { border-color: #ec7063; box-shadow: 0 0 18px rgba(236, 112, 99, 0.45); }
+    .char-card.preview-focus { border-color: #f0d25c; box-shadow: 0 0 16px rgba(240, 210, 92, 0.3); }
 
-    .char-swatch {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      margin: 0 auto 8px;
-      border: 2px solid rgba(255, 255, 255, 0.12);
+    .char-thumb {
+      display: block;
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 10px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.14);
+      background: #0e1218;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
 
     .char-card strong {
       font-family: "Cinzel", serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.06em;
+      font-size: 0.78rem;
+      letter-spacing: 0.07em;
+      color: #f5f1e8;
+      display: block;
     }
 
     .char-card span {
       display: block;
-      font-size: 0.62rem;
-      color: var(--muted);
-      margin-top: 2px;
+      font-size: 0.68rem;
+      color: #aeb8c9;
+      margin-top: 4px;
+      line-height: 1.35;
     }
 
     .pick-hint {
       text-align: center;
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin: 8px 0;
-      min-height: 1.35em;
+      font-size: clamp(0.9rem, 2.4vw, 1.05rem);
+      font-weight: 600;
+      color: #d8e2f0;
+      margin: 6px 0 16px;
+      min-height: 1.4em;
+      letter-spacing: 0.03em;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
     #btn-fight {
@@ -405,9 +470,12 @@
         <div class="select-layout">
           <div class="roster" id="roster"></div>
           <aside id="char-preview" aria-live="polite">
+            <div class="char-preview-portrait-wrap">
+              <canvas id="pv-portrait" width="300" height="210" role="img" aria-label="Character portrait preview"></canvas>
+            </div>
             <h3 id="pv-name">—</h3>
-            <div class="style-tag" id="pv-style">Hover a portrait</div>
-            <p id="pv-desc" style="margin:0 0 10px;color:var(--muted);font-size:0.78rem;line-height:1.4;"></p>
+            <div class="style-tag" id="pv-style">Hover a warrior</div>
+            <p id="pv-desc" class="pv-desc"></p>
             <ul class="combo-list" id="pv-combos"></ul>
           </aside>
         </div>
@@ -563,6 +631,214 @@
             { name: "Form Breaker", keys: "K → K → J", letters: ["K", "K", "J"], dmg: 30, knock: 14, dur: 54, t0: 34, t1: 14, w: 1.5, h: 0.5, yOff: 42 },
           ],
         },
+        {
+          id: "kai", name: "Kai", title: "General of the Jade",
+          style: "Brute — chain reach",
+          styleDesc: "Wide sweeps; corners you with long hooks and jade-weighted blows.",
+          colors: { body: "#2a4a38", accent: "#6bc4a8", glow: "#b8ffe0" },
+          speed: 0.91, punchMul: 1.1, kickMul: 1.08,
+          spriteAs: "tailung",
+          draw: { aura: true },
+          combos: [
+            { name: "Jade Hook Grapple", keys: "J → K → J", letters: ["J", "K", "J"], dmg: 30, knock: 16, dur: 52, t0: 32, t1: 12, w: 1.4, h: 0.48, yOff: 34 },
+            { name: "Oblivion Sweep", keys: "K → J → K", letters: ["K", "J", "K"], dmg: 28, knock: 14, dur: 50, t0: 30, t1: 14, w: 1.5, h: 0.42, yOff: 52 },
+          ],
+        },
+        {
+          id: "oogway", name: "Oogway", title: "Valley Founder",
+          style: "Balancer — no wasted motion",
+          styleDesc: "Patient circles; one touch redirects your whole rush.",
+          colors: { body: "#3d5a3a", accent: "#a8d878", glow: "#e8ffd0" },
+          speed: 0.95, punchMul: 1.05, kickMul: 0.98,
+          spriteAs: "shifu",
+          draw: { staff: true },
+          combos: [
+            { name: "Peach Blossom Palm", keys: "J → J → K", letters: ["J", "J", "K"], dmg: 24, knock: 10, dur: 46, t0: 28, t1: 12, w: 1.25, h: 0.38, yOff: 30 },
+            { name: "Stillness Fall", keys: "K → K → K", letters: ["K", "K", "K"], dmg: 26, knock: 12, dur: 50, t0: 34, t1: 14, w: 1.35, h: 0.45, yOff: 38 },
+          ],
+        },
+        {
+          id: "lishan", name: "Li Shan", title: "Panda Chief",
+          style: "Protector — throws & hugs",
+          styleDesc: "Grappling heart; closes close and stays there.",
+          colors: { body: "#252525", accent: "#d8a84a", glow: "#f0c878" },
+          speed: 0.93, punchMul: 1.06, kickMul: 0.97,
+          spriteAs: "po",
+          draw: { belly: 1.12 },
+          combos: [
+            { name: "Father Bear Hug", keys: "K → J → J", letters: ["K", "J", "J"], dmg: 25, knock: 11, dur: 48, t0: 28, t1: 12, w: 1.35, h: 0.5, yOff: 36 },
+            { name: "Village Toss", keys: "J → K → K", letters: ["J", "K", "K"], dmg: 23, knock: 15, dur: 46, t0: 26, t1: 10, w: 1.3, h: 0.44, yOff: 40 },
+          ],
+        },
+        {
+          id: "meimei", name: "Mei Mei", title: "Ribbon Dancer",
+          style: "Flow — spin entries",
+          styleDesc: "Ribbon feints; unpredictably swaps high and low shells.",
+          colors: { body: "#1e1e22", accent: "#e86a9a", glow: "#ffb8d8" },
+          speed: 1.05, punchMul: 0.94, kickMul: 1.06,
+          spriteAs: "po",
+          draw: { belly: 1.08 },
+          combos: [
+            { name: "Noodle Spiral", keys: "J → K → J", letters: ["J", "K", "J"], dmg: 22, knock: 9, dur: 44, t0: 26, t1: 10, w: 1.2, h: 0.4, yOff: 32 },
+            { name: "Ribbon Vault", keys: "K → K → J", letters: ["K", "K", "J"], dmg: 26, knock: 13, dur: 48, t0: 30, t1: 12, w: 1.45, h: 0.36, yOff: 48 },
+          ],
+        },
+        {
+          id: "thunderingrhino", name: "Thundering Rhino", title: "Master Council",
+          style: "Tank — forward momentum",
+          styleDesc: "Armored charges; one good horn line wins space.",
+          colors: { body: "#6a6a72", accent: "#c8c8d8", glow: "#f0f0ff" },
+          speed: 0.88, punchMul: 1.15, kickMul: 1.06,
+          spriteAs: "tigress",
+          draw: { stripes: true },
+          combos: [
+            { name: "Horn Line Drive", keys: "J → J → J", letters: ["J", "J", "J"], dmg: 28, knock: 14, dur: 52, t0: 32, t1: 14, w: 1.35, h: 0.5, yOff: 40 },
+            { name: "Council Crash", keys: "K → J → K", letters: ["K", "J", "K"], dmg: 31, knock: 18, dur: 56, t0: 36, t1: 14, w: 1.55, h: 0.42, yOff: 56 },
+          ],
+        },
+        {
+          id: "stormingox", name: "Storming Ox", title: "Master Council",
+          style: "Wall — counter spikes",
+          styleDesc: "Plants and answers; loves the mid-range trade.",
+          colors: { body: "#4a4450", accent: "#9a9098", glow: "#d0c8d0" },
+          speed: 0.96, punchMul: 1.08, kickMul: 1.02,
+          spriteAs: "monkey",
+          draw: { tail: true },
+          combos: [
+            { name: "Iron Wall Bash", keys: "K → J → J", letters: ["K", "J", "J"], dmg: 27, knock: 12, dur: 50, t0: 30, t1: 12, w: 1.4, h: 0.46, yOff: 34 },
+            { name: "Stampede Turn", keys: "J → K → J", letters: ["J", "K", "J"], dmg: 24, knock: 10, dur: 46, t0: 28, t1: 11, w: 1.3, h: 0.48, yOff: 30 },
+          ],
+        },
+        {
+          id: "croc", name: "Master Croc", title: "Bandit Turned Master",
+          style: "Snap — tail logic",
+          styleDesc: "Explosive snaps from low stance; punishes panic jumps.",
+          colors: { body: "#2d5c48", accent: "#88c8a0", glow: "#c0ffe0" },
+          speed: 1.03, punchMul: 1.0, kickMul: 1.1,
+          spriteAs: "viper",
+          draw: { coil: true },
+          combos: [
+            { name: "Death Roll Chain", keys: "K → K → J", letters: ["K", "K", "J"], dmg: 29, knock: 15, dur: 50, t0: 30, t1: 12, w: 1.45, h: 0.38, yOff: 46 },
+            { name: "River Snap", keys: "J → J → K", letters: ["J", "J", "K"], dmg: 25, knock: 11, dur: 46, t0: 28, t1: 12, w: 1.3, h: 0.42, yOff: 38 },
+          ],
+        },
+        {
+          id: "chicken", name: "Master Chicken", title: "Bravest Master",
+          style: "Panic — lucky punishes",
+          styleDesc: "Awkward steps that somehow clip; absurd hit boxes.",
+          colors: { body: "#d8d0b8", accent: "#c04040", glow: "#ffa0a0" },
+          speed: 1.14, punchMul: 0.88, kickMul: 0.95,
+          spriteAs: "crane",
+          draw: { wings: true },
+          combos: [
+            { name: "Fluster Flurry", keys: "J → K → K", letters: ["J", "K", "K"], dmg: 21, knock: 7, dur: 42, t0: 24, t1: 9, w: 1.15, h: 0.34, yOff: 28 },
+            { name: "Plucking Finale", keys: "K → J → J", letters: ["K", "J", "J"], dmg: 27, knock: 12, dur: 48, t0: 30, t1: 12, w: 1.4, h: 0.36, yOff: 40 },
+          ],
+        },
+        {
+          id: "shen", name: "Lord Shen", title: "Cannon Throne",
+          style: "Blade wings — spacing",
+          styleDesc: "Keeps you at spear length; explosives in his rhythm.",
+          colors: { body: "#e8e8f0", accent: "#404060", glow: "#a8a8d8" },
+          speed: 1.06, punchMul: 1.02, kickMul: 1.14,
+          spriteAs: "crane",
+          draw: { wings: true },
+          combos: [
+            { name: "Throne Skewer", keys: "J → K → J", letters: ["J", "K", "J"], dmg: 28, knock: 11, dur: 50, t0: 30, t1: 12, w: 1.38, h: 0.34, yOff: 36 },
+            { name: "Cannon Waltz", keys: "K → K → K", letters: ["K", "K", "K"], dmg: 30, knock: 13, dur: 54, t0: 34, t1: 14, w: 1.5, h: 0.4, yOff: 44 },
+          ],
+        },
+        {
+          id: "wolfboss", name: "Wolf Boss", title: "Pack Alpha",
+          style: "Rushdown — pack pressure",
+          styleDesc: "Unrelenting steps; hits on your whiff frames.",
+          colors: { body: "#4a4a52", accent: "#8090a8", glow: "#c8d8e8" },
+          speed: 1.1, punchMul: 1.04, kickMul: 1.02,
+          spriteAs: "zhen",
+          draw: { ears: true },
+          combos: [
+            { name: "Pack Rush", keys: "J → J → K", letters: ["J", "J", "K"], dmg: 26, knock: 12, dur: 48, t0: 28, t1: 11, w: 1.35, h: 0.38, yOff: 40 },
+            { name: "Alpha Trip", keys: "K → J → K", letters: ["K", "J", "K"], dmg: 28, knock: 16, dur: 50, t0: 30, t1: 12, w: 1.42, h: 0.4, yOff: 50 },
+          ],
+        },
+        {
+          id: "soothsayer", name: "Soothsayer", title: "Canyon Oracle",
+          style: "Trickster — reads your pattern",
+          styleDesc: "Feints that look like mistakes; punishes greedy specials.",
+          colors: { body: "#7a6848", accent: "#c8a878", glow: "#f0dcc8" },
+          speed: 0.99, punchMul: 0.96, kickMul: 1.08,
+          spriteAs: "zhen",
+          draw: { ears: true },
+          combos: [
+            { name: "Horoscope Fake", keys: "K → J → J", letters: ["K", "J", "J"], dmg: 23, knock: 9, dur: 44, t0: 28, t1: 11, w: 1.28, h: 0.36, yOff: 34 },
+            { name: "Canyon Circle", keys: "J → K → J", letters: ["J", "K", "J"], dmg: 25, knock: 10, dur: 46, t0: 28, t1: 12, w: 1.32, h: 0.38, yOff: 42 },
+          ],
+        },
+        {
+          id: "mrping", name: "Mr. Ping", title: "Noodle Sage",
+          style: "Spacing — ladle range",
+          styleDesc: "The power of soup rhythm; absurdly honest reach.",
+          colors: { body: "#f0e8d8", accent: "#c86838", glow: "#ffb890" },
+          speed: 1.02, punchMul: 0.9, kickMul: 0.88,
+          spriteAs: "crane",
+          draw: { wings: true },
+          combos: [
+            { name: "Secret Ingredient", keys: "J → J → J", letters: ["J", "J", "J"], dmg: 20, knock: 6, dur: 40, t0: 24, t1: 9, w: 1.1, h: 0.4, yOff: 26 },
+            { name: "Ladle Arc", keys: "K → K → J", letters: ["K", "K", "J"], dmg: 24, knock: 11, dur: 46, t0: 28, t1: 11, w: 1.35, h: 0.36, yOff: 38 },
+          ],
+        },
+        {
+          id: "fung", name: "Fung", title: "Croc Mercenary",
+          style: "Dirty — command grab bias",
+          styleDesc: "Laughs through your block; looks for the reset.",
+          colors: { body: "#3a6848", accent: "#90d8a8", glow: "#c8ffe0" },
+          speed: 1.04, punchMul: 0.98, kickMul: 1.06,
+          spriteAs: "viper",
+          draw: { coil: true },
+          combos: [
+            { name: "Laughing Grab", keys: "J → K → K", letters: ["J", "K", "K"], dmg: 26, knock: 10, dur: 48, t0: 28, t1: 12, w: 1.32, h: 0.42, yOff: 36 },
+            { name: "Mercenary Bite", keys: "K → J → K", letters: ["K", "J", "K"], dmg: 28, knock: 13, dur: 50, t0: 30, t1: 12, w: 1.4, h: 0.4, yOff: 46 },
+          ],
+        },
+        {
+          id: "porcupine", name: "Master Porcupine", title: "Needle Palm",
+          style: "Chip — constant pokes",
+          styleDesc: "Small hits that add up; panic and bleed meter.",
+          colors: { body: "#5a4a58", accent: "#c8a0c8", glow: "#f0d0f0" },
+          speed: 1.12, punchMul: 0.92, kickMul: 0.94,
+          spriteAs: "mantis",
+          draw: { blur: 2 },
+          combos: [
+            { name: "Needle Volley", keys: "J → J → K", letters: ["J", "J", "K"], dmg: 22, knock: 8, dur: 42, t0: 22, t1: 8, w: 1.12, h: 0.32, yOff: 32 },
+            { name: "Quill Cage", keys: "K → K → K", letters: ["K", "K", "K"], dmg: 26, knock: 9, dur: 48, t0: 28, t1: 10, w: 1.28, h: 0.3, yOff: 40 },
+          ],
+        },
+        {
+          id: "elephant", name: "Master Elephant", title: "Master Council",
+          style: "Giant — screen control",
+          styleDesc: "Long limbs, heavy turns; one read ends neutral.",
+          colors: { body: "#8a8088", accent: "#d0c8d0", glow: "#f8f0f8" },
+          speed: 0.9, punchMul: 1.12, kickMul: 1.08,
+          spriteAs: "tigress",
+          draw: { stripes: true },
+          combos: [
+            { name: "Trunk Cannon", keys: "K → J → J", letters: ["K", "J", "J"], dmg: 29, knock: 13, dur: 52, t0: 32, t1: 13, w: 1.42, h: 0.48, yOff: 38 },
+            { name: "Quake Stomp", keys: "J → K → J", letters: ["J", "K", "J"], dmg: 27, knock: 17, dur: 50, t0: 30, t1: 12, w: 1.38, h: 0.5, yOff: 58 },
+          ],
+        },
+        {
+          id: "jombie", name: "Jade Warrior", title: "Spirit Thrall",
+          style: "Ghost tempo — slip hits",
+          styleDesc: "Uncanny timing; flickers through your punish window.",
+          colors: { body: "#5a6a58", accent: "#a0f0c8", glow: "#d0ffe8" },
+          speed: 1.07, punchMul: 1.0, kickMul: 1.0,
+          spriteAs: "chameleon",
+          draw: { ghosts: 3 },
+          combos: [
+            { name: "Jade Blink", keys: "J → K → K", letters: ["J", "K", "K"], dmg: 25, knock: 10, dur: 46, t0: 28, t1: 11, w: 1.3, h: 0.4, yOff: 34 },
+            { name: "Thrall Rush", keys: "K → J → K", letters: ["K", "J", "K"], dmg: 27, knock: 12, dur: 50, t0: 30, t1: 12, w: 1.4, h: 0.44, yOff: 42 },
+          ],
+        },
       ];
 
       var W = 960, H = 540, GROUND = H - 72;
@@ -582,6 +858,121 @@
       var cameraShake = 0;
       var frameId = 0;
       var previewHoverId = null;
+      var selectPortraitRaf = null;
+      var portraitPhase = 0;
+
+      function stopSelectPortraitAnim() {
+        if (selectPortraitRaf) {
+          cancelAnimationFrame(selectPortraitRaf);
+          selectPortraitRaf = null;
+        }
+      }
+
+      function drawCharThumb(cv, ch) {
+        if (!cv || !ch) return;
+        var tcx = cv.getContext("2d");
+        var pw = cv.width, ph = cv.height;
+        tcx.setTransform(1, 0, 0, 1, 0, 0);
+        tcx.clearRect(0, 0, pw, ph);
+        var bg = tcx.createLinearGradient(0, 0, 0, ph);
+        bg.addColorStop(0, "#2d3a4d");
+        bg.addColorStop(1, "#151b24");
+        tcx.fillStyle = bg;
+        tcx.fillRect(0, 0, pw, ph);
+        var fakeF = { char: ch, state: "idle", facing: 1, stateT: 0, animPhase: 0, walkPhase: 0, y: 0, specialData: null };
+        var bh = (ch.draw && ch.draw.belly) ? 1.08 : 1;
+        var breathe = 1;
+        var scale = 0.38;
+        var pw2 = pw / scale;
+        var ph2 = ph / scale;
+        var fground = ph2 * 0.88;
+        var h = 110 * bh * breathe;
+        var w = 76 * breathe;
+        var cx = pw2 / 2;
+        var r = { x: cx - w / 2, y: fground - h - 4, w: w, h: h };
+        var headY = r.y + 26 * breathe;
+        var hx = r.x + r.w * 0.5 + 6;
+        fakeF.y = fground;
+        tcx.setTransform(scale, 0, 0, scale, 0, 0);
+        var saveCtx = ctx;
+        ctx = tcx;
+        try {
+          drawCharacterSprite(fakeF, r, hx, headY, 1, breathe, fground);
+        } finally {
+          ctx = saveCtx;
+        }
+      }
+
+      function drawSelectPortrait(chOrNull) {
+        var pvc = C("pv-portrait");
+        if (!pvc) return;
+        var ptx = pvc.getContext("2d");
+        var pw = pvc.width, ph = pvc.height;
+        ptx.setTransform(1, 0, 0, 1, 0, 0);
+        ptx.clearRect(0, 0, pw, ph);
+        var bg = ptx.createLinearGradient(0, 0, 0, ph);
+        bg.addColorStop(0, "#252f42");
+        bg.addColorStop(1, "#0d1018");
+        ptx.fillStyle = bg;
+        ptx.fillRect(0, 0, pw, ph);
+        if (!chOrNull) {
+          ptx.fillStyle = "rgba(200, 210, 230, 0.45)";
+          ptx.font = '600 15px "Rajdhani", system-ui, sans-serif';
+          ptx.textAlign = "center";
+          ptx.textBaseline = "middle";
+          ptx.fillText("Hover or focus a warrior", pw / 2, ph / 2);
+          return;
+        }
+        var fakeF = {
+          char: chOrNull,
+          state: "idle",
+          facing: 1,
+          stateT: 0,
+          animPhase: portraitPhase,
+          walkPhase: 0.25,
+          y: 0,
+          specialData: null,
+        };
+        var bh = (chOrNull.draw && chOrNull.draw.belly) ? 1.08 : 1;
+        var breathe = 1 + Math.sin(portraitPhase) * 0.02;
+        var scale = 0.62;
+        var pw2 = pw / scale;
+        var ph2 = ph / scale;
+        var fground = ph2 * 0.88;
+        var h = 110 * bh * breathe;
+        var w = 76 * breathe;
+        var cx = pw2 / 2;
+        var r = { x: cx - w / 2, y: fground - h - 6, w: w, h: h };
+        var headY = r.y + 26 * breathe;
+        var hx = r.x + r.w * 0.5 + 6;
+        fakeF.y = fground;
+        ptx.setTransform(scale, 0, 0, scale, 0, 0);
+        var saveCtx = ctx;
+        ctx = ptx;
+        try {
+          drawCharacterSprite(fakeF, r, hx, headY, 1, breathe, fground);
+        } finally {
+          ctx = saveCtx;
+        }
+      }
+
+      function tickSelectPortrait() {
+        selectPortraitRaf = requestAnimationFrame(tickSelectPortrait);
+        var sel = C("screen-select");
+        if (!sel || sel.hidden) {
+          stopSelectPortraitAnim();
+          return;
+        }
+        portraitPhase += 0.045;
+        var ch = previewHoverId ? findChar(previewHoverId) : null;
+        drawSelectPortrait(ch);
+      }
+
+      function startSelectPortraitAnim() {
+        if (selectPortraitRaf) return;
+        portraitPhase = 0;
+        tickSelectPortrait();
+      }
 
       var audioCtx = null;
       function getAudioCtx() {
@@ -1055,8 +1446,10 @@
       }
 
       /** Stylized vector “likeness” per master — original art only (no official renders). */
-      function drawCharacterSprite(f, r, hx, headY, fx, br) {
+      function drawCharacterSprite(f, r, hx, headY, fx, br, groundY) {
+        var gy = groundY != null ? groundY : GROUND;
         var id = f.char.id;
+        var drawKey = f.char.spriteAs || id;
         var c = f.char.colors;
         var d = f.char.draw || {};
         var punching = f.state === "punch" || f.state === "special";
@@ -1078,10 +1471,10 @@
 
         ctx.fillStyle = "#0a0c0f";
         ctx.beginPath();
-        ctx.ellipse(r.x + r.w / 2, GROUND - 2, r.w * 0.38, 7, 0, 0, Math.PI * 2);
+        ctx.ellipse(r.x + r.w / 2, gy - 2, r.w * 0.38, 7, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        if (id === "po") {
+        if (drawKey === "po") {
           ctx.fillStyle = "#f4e8c8";
           ctx.beginPath();
           ctx.ellipse(r.x + r.w / 2, r.y + 68, r.w * 0.42, r.h * 0.26, 0, 0, Math.PI * 2);
@@ -1133,7 +1526,7 @@
           return;
         }
 
-        if (id === "zhen") {
+        if (drawKey === "zhen") {
           ctx.fillStyle = "#6b3d22";
           ctx.beginPath();
           ctx.ellipse(r.x + r.w / 2, r.y + 58, r.w * 0.36, r.h * 0.32, 0, 0, Math.PI * 2);
@@ -1189,7 +1582,7 @@
           return;
         }
 
-        if (id === "shifu") {
+        if (drawKey === "shifu") {
           ctx.fillStyle = "#5c1a28";
           roundRect2(ctx, r.x + 14, r.y + 36, r.w - 28, r.h - 44, 8);
           ctx.fill();
@@ -1236,7 +1629,7 @@
           return;
         }
 
-        if (id === "tigress") {
+        if (drawKey === "tigress") {
           ctx.fillStyle = "#b87a42";
           roundRect2(ctx, r.x + 8, r.y + 34, r.w - 16, r.h - 42, 10);
           ctx.fill();
@@ -1285,7 +1678,7 @@
           return;
         }
 
-        if (id === "monkey") {
+        if (drawKey === "monkey") {
           ctx.fillStyle = "#4a3d2e";
           roundRect2(ctx, r.x + 10, r.y + 32, r.w - 20, r.h - 36, 11);
           ctx.fill();
@@ -1325,7 +1718,7 @@
           return;
         }
 
-        if (id === "crane") {
+        if (drawKey === "crane") {
           ctx.fillStyle = "#eef4f8";
           ctx.beginPath();
           ctx.moveTo(r.x + r.w / 2, r.y + 24);
@@ -1365,7 +1758,7 @@
           return;
         }
 
-        if (id === "viper") {
+        if (drawKey === "viper") {
           ctx.strokeStyle = "#3d7a48";
           ctx.lineWidth = 14;
           ctx.lineCap = "round";
@@ -1414,7 +1807,7 @@
           return;
         }
 
-        if (id === "mantis") {
+        if (drawKey === "mantis") {
           ctx.fillStyle = "#5a9a5a";
           ctx.beginPath();
           ctx.ellipse(r.x + r.w / 2, r.y + 60, r.w * 0.42, r.h * 0.28, 0, 0, Math.PI * 2);
@@ -1465,7 +1858,7 @@
           return;
         }
 
-        if (id === "tailung") {
+        if (drawKey === "tailung") {
           ctx.fillStyle = "#5a6578";
           roundRect2(ctx, r.x + 6, r.y + 30, r.w - 12, r.h - 38, 10);
           ctx.fill();
@@ -1510,7 +1903,7 @@
           return;
         }
 
-        if (id === "chameleon") {
+        if (drawKey === "chameleon") {
           ctx.fillStyle = "#5a3d78";
           roundRect2(ctx, r.x + 8, r.y + 38, r.w - 16, r.h - 46, 12);
           ctx.fill();
@@ -1767,6 +2160,8 @@
       }
 
       function beginBattle() {
+        C("wrap").classList.remove("select-mode");
+        stopSelectPortraitAnim();
         C("screen-select").hidden = true;
         C("screen-main").hidden = true;
         C("screen-howto").hidden = true;
@@ -1800,6 +2195,8 @@
         if (announce._t) clearTimeout(announce._t);
         announce._t = null;
         announceText = roundResultText = "";
+        C("wrap").classList.remove("select-mode");
+        stopSelectPortraitAnim();
         C("screen-main").hidden = false;
         C("screen-howto").hidden = true;
         C("screen-select").hidden = true;
@@ -1822,6 +2219,7 @@
       }
 
       function showSelect() {
+        C("wrap").classList.add("select-mode");
         C("screen-main").hidden = true;
         C("screen-howto").hidden = true;
         C("screen-select").hidden = false;
@@ -1834,14 +2232,27 @@
         buildRoster();
         updateFightBtn();
         updateCharPreview(null);
+        startSelectPortraitAnim();
         syncBgMusicToScreen();
+      }
+
+      function comboKeysForSelectScreen(co) {
+        var forP2 = mode === "2p" && p1Pick && !p2Pick;
+        if (!forP2) return co.keys;
+        var letters = co.letters;
+        if (letters && letters.length) {
+          return letters
+            .map(function (L) { return L === "J" ? "V" : L === "K" ? "B" : L; })
+            .join(" → ");
+        }
+        return co.keys.replace(/\bJ\b/g, "V").replace(/\bK\b/g, "B");
       }
 
       function updateCharPreview(chOrNull) {
         if (!chOrNull && previewHoverId) chOrNull = findChar(previewHoverId);
         if (!chOrNull) {
           C("pv-name").textContent = "—";
-          C("pv-style").textContent = "Hover a portrait";
+          C("pv-style").textContent = "Hover a warrior";
           C("pv-desc").textContent = "";
           C("pv-combos").innerHTML = "";
           return;
@@ -1855,7 +2266,7 @@
           var li = document.createElement("li");
           li.innerHTML =
             "<div class=\"combo-name\">" + co.name + "</div>" +
-            "<div class=\"combo-keys\">" + co.keys + "</div>";
+            "<div class=\"combo-keys\">" + comboKeysForSelectScreen(co) + "</div>";
           ul.appendChild(li);
         });
       }
@@ -1863,12 +2274,17 @@
       function buildRoster() {
         var el = C("roster");
         el.innerHTML = "";
+        el.onmouseleave = function () {
+          previewHoverId = null;
+          updateCharPreview(null);
+          document.querySelectorAll(".char-card").forEach(function (x) { x.classList.remove("preview-focus"); });
+        };
         ROSTER.forEach(function (ch) {
           var card = document.createElement("button");
           card.type = "button";
           card.className = "char-card";
           card.innerHTML =
-            "<div class=\"char-swatch\" style=\"background:linear-gradient(145deg," + ch.colors.accent + "," + ch.colors.body + ")\"></div>" +
+            "<canvas class=\"char-thumb\" width=\"76\" height=\"76\" aria-hidden=\"true\"></canvas>" +
             "<strong>" + ch.name + "</strong>" +
             "<span>" + ch.title + "</span>";
 
@@ -1881,6 +2297,8 @@
           card.addEventListener("focus", function () {
             previewHoverId = ch.id;
             updateCharPreview(ch);
+            document.querySelectorAll(".char-card").forEach(function (x) { x.classList.remove("preview-focus"); });
+            card.classList.add("preview-focus");
           });
 
           card.addEventListener("click", function () {
@@ -1900,8 +2318,11 @@
             }
             updateSelectionUI();
             updateFightBtn();
+            if (previewHoverId) updateCharPreview(findChar(previewHoverId));
           });
           el.appendChild(card);
+          var thumb = card.querySelector(".char-thumb");
+          if (thumb) drawCharThumb(thumb, ch);
         });
       }
 
