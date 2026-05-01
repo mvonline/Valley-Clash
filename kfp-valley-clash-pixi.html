@@ -398,7 +398,8 @@
           <h3>Combos</h3>
           <p>Each master has <strong>two unique chains</strong>. Enter the sequence <em>on the ground</em> while idle — the final button triggers their <strong>signature move</strong> (heavy damage, cinematic flair). Watch the <strong>character select</strong> panel for exact inputs (P1 uses <kbd>J</kbd>/<kbd>K</kbd>; P2 uses <kbd>V</kbd>/<kbd>B</kbd>).</p>
           <h3>Match</h3>
-          <p>First to win <strong>two rounds</strong>. Reduced damage while blocking.</p>
+          <p>First to win <strong>two rounds</strong>. Reduced damage while blocking. Each round starts with a <strong>3-2-1</strong> countdown, then <strong>FIGHT!</strong></p>
+          <p><strong>Sound</strong> · Procedural SFX and looping background music (Web Audio — calmer theme on menus, faster theme in the arena). Tap / click / press a key if audio is silent (autoplay rules).</p>
           <div class="main-menu" style="margin-top:16px;">
             <button type="button" class="menu-btn" id="howto-back">← Main menu</button>
           </div>
@@ -584,9 +585,171 @@
       var phase = "idle";
       var phaseT = 0;
       var announceText = "";
+      var roundResultText = "";
       var cameraShake = 0;
       var frameId = 0;
       var previewHoverId = null;
+
+      var audioCtx = null;
+      function getAudioCtx() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        return audioCtx;
+      }
+      function resumeAudio() {
+        try {
+          var a = getAudioCtx();
+          if (a.state === "suspended") {
+            a.resume().then(function () {
+              syncBgMusicToScreen();
+            });
+          } else {
+            syncBgMusicToScreen();
+          }
+        } catch (e) {}
+      }
+      function sfxTone(freq, duration, type, gain, slideTo) {
+        try {
+          var ctx = getAudioCtx();
+          var t0 = ctx.currentTime;
+          var o = ctx.createOscillator();
+          var g = ctx.createGain();
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.type = type || "sine";
+          o.frequency.setValueAtTime(freq, t0);
+          if (slideTo != null) o.frequency.exponentialRampToValueAtTime(Math.max(40, slideTo), t0 + duration);
+          g.gain.setValueAtTime(0, t0);
+          g.gain.linearRampToValueAtTime(gain || 0.12, t0 + 0.008);
+          g.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
+          o.start(t0);
+          o.stop(t0 + duration + 0.02);
+        } catch (e) {}
+      }
+      function playPunchSound() {
+        sfxTone(220, 0.055, "square", 0.11);
+        sfxTone(90, 0.04, "triangle", 0.06);
+      }
+      function playKickSound() {
+        sfxTone(110, 0.09, "triangle", 0.14);
+        sfxTone(55, 0.07, "sine", 0.1);
+      }
+      function playBlockSound() {
+        sfxTone(140, 0.035, "square", 0.05);
+      }
+      function playKOSound() {
+        try {
+          var ctx = getAudioCtx();
+          var t0 = ctx.currentTime;
+          var o = ctx.createOscillator();
+          var g = ctx.createGain();
+          o.connect(g);
+          g.connect(ctx.destination);
+          o.type = "sawtooth";
+          o.frequency.setValueAtTime(280, t0);
+          o.frequency.exponentialRampToValueAtTime(45, t0 + 0.55);
+          g.gain.setValueAtTime(0.22, t0);
+          g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.6);
+          o.start(t0);
+          o.stop(t0 + 0.65);
+        } catch (e) {}
+      }
+      function playCountBeep() {
+        sfxTone(520, 0.1, "sine", 0.1);
+      }
+      function playFightChime() {
+        sfxTone(392, 0.1, "triangle", 0.11);
+        setTimeout(function () {
+          sfxTone(523, 0.14, "sine", 0.12);
+        }, 70);
+      }
+
+      var musicBus = null;
+      var bgMusic = { timer: null, beat: 0, kind: null };
+      var MENU_BGM_SEQ = [
+        { f: 196, gap: 520 }, { f: 220, gap: 520 }, { f: 262, gap: 540 }, { f: 233, gap: 500 },
+        { f: 196, gap: 520 }, { f: 174, gap: 560 }, { f: 220, gap: 520 }, { f: 196, gap: 580 },
+      ];
+      var BATTLE_BGM_SEQ = [
+        { f: 294, gap: 290 }, { f: 330, gap: 290 }, { f: 392, gap: 290 }, { f: 349, gap: 290 },
+        { f: 330, gap: 290 }, { f: 440, gap: 320 }, { f: 392, gap: 290 }, { f: 294, gap: 300 },
+      ];
+
+      function getMusicBus() {
+        if (!musicBus) {
+          var ctx = getAudioCtx();
+          musicBus = ctx.createGain();
+          musicBus.gain.value = 0.42;
+          musicBus.connect(ctx.destination);
+        }
+        return musicBus;
+      }
+
+      function playMusicTone(freq, duration, vol) {
+        try {
+          var ctx = getAudioCtx();
+          var bus = getMusicBus();
+          var o = ctx.createOscillator();
+          var g = ctx.createGain();
+          o.type = "triangle";
+          o.connect(g);
+          g.connect(bus);
+          var t0 = ctx.currentTime;
+          o.frequency.setValueAtTime(freq, t0);
+          g.gain.setValueAtTime(0, t0);
+          g.gain.linearRampToValueAtTime(vol, t0 + 0.03);
+          g.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
+          o.start(t0);
+          o.stop(t0 + duration + 0.08);
+        } catch (e) {}
+      }
+
+      function stopBackgroundMusic() {
+        if (bgMusic.timer) {
+          clearTimeout(bgMusic.timer);
+          bgMusic.timer = null;
+        }
+        bgMusic.beat = 0;
+        bgMusic.kind = null;
+      }
+
+      function scheduleMenuBgMusic() {
+        stopBackgroundMusic();
+        bgMusic.kind = "menu";
+        function tick() {
+          if (bgMusic.kind !== "menu") return;
+          var step = MENU_BGM_SEQ[bgMusic.beat % MENU_BGM_SEQ.length];
+          playMusicTone(step.f, 0.42, 0.052);
+          bgMusic.beat++;
+          bgMusic.timer = setTimeout(tick, step.gap);
+        }
+        tick();
+      }
+
+      function scheduleBattleBgMusic() {
+        stopBackgroundMusic();
+        bgMusic.kind = "battle";
+        function tick() {
+          if (bgMusic.kind !== "battle") return;
+          var step = BATTLE_BGM_SEQ[bgMusic.beat % BATTLE_BGM_SEQ.length];
+          playMusicTone(step.f, 0.24, 0.062);
+          bgMusic.beat++;
+          bgMusic.timer = setTimeout(tick, step.gap);
+        }
+        tick();
+      }
+
+      function syncBgMusicToScreen() {
+        try {
+          var a = getAudioCtx();
+          if (a.state !== "running") return;
+          var inArena = C("hud").classList.contains("active");
+          if (inArena) {
+            if (bgMusic.kind !== "battle") scheduleBattleBgMusic();
+          } else {
+            if (bgMusic.kind !== "menu") scheduleMenuBgMusic();
+          }
+        } catch (e) {}
+      }
 
       function findChar(id) {
         for (var i = 0; i < ROSTER.length; i++) {
@@ -683,7 +846,11 @@
         if (this.hp <= 0) {
           this.setState("ko", 99999);
           phase = "round_end";
-          phaseT = 96;
+          phaseT = 150;
+          var winner = this.side === 1 ? fighters[1] : fighters[0];
+          roundResultText = winner.char.name + " wins Round " + roundNum + "!";
+          if (C("round-msg")) C("round-msg").textContent = winner.char.name + " — round won";
+          playKOSound();
           if (this.side === 1) p2Wins++;
           else p1Wins++;
         } else {
@@ -768,8 +935,16 @@
             var hb = boxes[j];
             if (b.iFrames > 0) continue;
             if (rectsOverlap(hb, br)) {
+              var hpBefore = b.hp;
+              var blocking = b.state === "block" && b.block;
               b.applyHit(hb.dmg, hb.knock);
               if (hb.tag === "sp") a.specialHitLanded = true;
+              var ko = b.hp <= 0 && hpBefore > 0;
+              if (!ko && hpBefore > 0) {
+                if (blocking) playBlockSound();
+                else if (hb.tag === "p") playPunchSound();
+                else playKickSound();
+              }
             }
           }
         }
@@ -1470,6 +1645,16 @@
           ctx.fillStyle = "#c9a227";
           ctx.fillText(announceText, W / 2, 118);
         }
+
+        if (roundResultText && phase === "round_end") {
+          ctx.font = "bold 30px Cinzel, serif";
+          ctx.textAlign = "center";
+          ctx.strokeStyle = "#000";
+          ctx.lineWidth = 4;
+          ctx.strokeText(roundResultText, W / 2, 178);
+          ctx.fillStyle = "#e8d4a8";
+          ctx.fillText(roundResultText, W / 2, 178);
+        }
       }
 
       function hudUpdate() {
@@ -1515,9 +1700,10 @@
           if (phaseT <= 0) {
             if (p1Wins >= 2 || p2Wins >= 2) {
               announceText = (p1Wins >= 2 ? fighters[0].char.name : fighters[1].char.name);
+              roundResultText = "";
               phase = "winner";
               phaseT = 180;
-              C("round-msg").textContent = "VICTORY";
+              if (C("round-msg")) C("round-msg").textContent = "VICTORY";
             } else {
               roundNum++;
               startRound();
@@ -1533,6 +1719,7 @@
           ctx.fillText("Wins the tournament", W / 2, 168);
           if (phaseT <= 0) {
             announceText = "";
+            roundResultText = "";
             showMainMenu();
           }
         }
@@ -1569,20 +1756,34 @@
         app.ticker.add(loop);
       }
 
-      function announce(t, dur, next) {
+      function announce(t, durMs, next) {
         announceText = t;
-        var left = dur;
-        var iv = setInterval(function () {
-          left -= 16;
-          if (left <= 0) {
-            clearInterval(iv);
-            announceText = "";
-            if (next) next();
-          }
-        }, 16);
+        if (announce._t) clearTimeout(announce._t);
+        announce._t = setTimeout(function () {
+          announce._t = null;
+          announceText = "";
+          if (next) next();
+        }, durMs);
+      }
+
+      function runCountdown(n) {
+        if (n <= 0) {
+          playFightChime();
+          announce("FIGHT!", 520, function () {
+            phase = "fight";
+          });
+          return;
+        }
+        playCountBeep();
+        announce(String(n), 820, function () {
+          runCountdown(n - 1);
+        });
       }
 
       function startRound() {
+        if (announce._t) clearTimeout(announce._t);
+        announce._t = null;
+        roundResultText = "";
         fighters[0].iFrames = 0;
         fighters[1].iFrames = 0;
         fighters[0].inputBuf = [];
@@ -1596,9 +1797,9 @@
         fighters[0].vx = fighters[1].vx = 0;
         fighters[0].vy = fighters[1].vy = 0;
         phase = "intro";
-        C("round-msg").textContent = "ROUND " + roundNum;
-        announce("ROUND " + roundNum, 72, function () {
-          announce("FIGHT!", 48, function () { phase = "fight"; });
+        if (C("round-msg")) C("round-msg").textContent = "ROUND " + roundNum;
+        announce("ROUND " + roundNum, 1100, function () {
+          runCountdown(3);
         });
       }
 
@@ -1629,9 +1830,13 @@
         } else {
           C("help").innerHTML = "<strong>P1</strong> WASD+JK · <strong>P2</strong> arrows+VB · <strong>Combos</strong>: see character cards.";
         }
+        syncBgMusicToScreen();
       }
 
       function showMainMenu() {
+        if (announce._t) clearTimeout(announce._t);
+        announce._t = null;
+        announceText = roundResultText = "";
         C("screen-main").hidden = false;
         C("screen-howto").hidden = true;
         C("screen-select").hidden = true;
@@ -1643,12 +1848,14 @@
         phase = "idle";
         mode = null;
         p1Pick = p2Pick = null;
+        syncBgMusicToScreen();
       }
 
       function showHowto() {
         C("screen-main").hidden = true;
         C("screen-howto").hidden = false;
         C("screen-select").hidden = true;
+        syncBgMusicToScreen();
       }
 
       function showSelect() {
@@ -1664,6 +1871,7 @@
         buildRoster();
         updateFightBtn();
         updateCharPreview(null);
+        syncBgMusicToScreen();
       }
 
       function updateCharPreview(chOrNull) {
@@ -1775,9 +1983,12 @@
       });
 
       window.addEventListener("keydown", function (e) {
+        resumeAudio();
         keys[e.code] = true;
         if (["Space", "ArrowUp", "ArrowDown", "Tab"].indexOf(e.code) >= 0) e.preventDefault();
       });
+
+      window.addEventListener("pointerdown", resumeAudio, { passive: true });
 
       window.addEventListener("keyup", function (e) {
         keys[e.code] = false;
