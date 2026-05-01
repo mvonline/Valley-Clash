@@ -2116,14 +2116,30 @@
         }
 
         syncKeysPrev();
-        if (texRef && texRef.source && typeof texRef.source.update === "function") texRef.source.update();
+        syncPixiTextureFromCanvas();
+      }
+
+      /** Push offscreen 2D canvas pixels to the Pixi GPU texture (v8 API). */
+      function syncPixiTextureFromCanvas() {
+        if (!texRef) return;
+        var src = texRef.source;
+        if (src && typeof src.update === "function") src.update();
+        else if (typeof texRef.update === "function") texRef.update();
       }
 
       async function bootPixi() {
-        var mod = await import("https://cdn.jsdelivr.net/npm/pixi.js@8.6.6/dist/pixi.min.mjs");
+        var pixiCdn = "https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.mjs";
+        var mod;
+        try {
+          mod = await import(pixiCdn);
+        } catch (e1) {
+          console.warn("Pixi load failed, retrying pinned 8.6.6:", e1);
+          mod = await import("https://cdn.jsdelivr.net/npm/pixi.js@8.6.6/dist/pixi.min.mjs");
+        }
         var Application = mod.Application;
         var Sprite = mod.Sprite;
         var Texture = mod.Texture;
+        var CanvasSource = mod.CanvasSource;
         if (!Application || !Sprite || !Texture) {
           console.error("Pixi.js exports missing", mod);
           return;
@@ -2134,13 +2150,28 @@
           height: H,
           background: 0x0e1218,
           antialias: true,
+          preference: "webgl",
+          powerPreference: "high-performance",
+          resolution: 1,
+          autoDensity: false,
         });
         pixiHost.appendChild(app.canvas);
         var off = document.createElement("canvas");
         off.width = W;
         off.height = H;
-        ctx = off.getContext("2d");
-        var tex = Texture.from(off);
+        ctx = off.getContext("2d", { alpha: false });
+        var tex;
+        if (CanvasSource) {
+          try {
+            var canvasSource = new CanvasSource({ resource: off, autoDensity: false });
+            tex = new Texture({ source: canvasSource, dynamic: true });
+          } catch (err) {
+            console.warn("CanvasSource dynamic texture failed, using Texture.from:", err);
+            tex = Texture.from(off);
+          }
+        } else {
+          tex = Texture.from(off);
+        }
         texRef = tex;
         var screenSprite = new Sprite(tex);
         app.stage.addChild(screenSprite);
